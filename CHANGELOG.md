@@ -3,7 +3,6 @@
 ## 1.0.1 — 2026-11-13
 
 - Replaced small, soft README screenshots with crisp 4× renders and full-width presentation.
-- Rebuilt WeChat, Xiaohongshu, LinkedIn, and X visual materials from the sharper bilingual Light and Dark UI images.
 - Application behavior is unchanged from 1.0.0.
 
 ## 1.0.0 — 2026-11-13
