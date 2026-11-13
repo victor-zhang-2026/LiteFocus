@@ -4,6 +4,7 @@ import AppKit
 struct FocusView: View {
     @Bindable var store: FocusStore
     let controller: FocusWindowController
+    var capturePreview = false
     @AppStorage("language") private var language = Locale.current.language.languageCode?.identifier == "zh" ? "zh" : "en"
     @AppStorage("appearance") private var appearance = "light"
     @FocusState private var focused: Field?
@@ -81,17 +82,29 @@ struct FocusView: View {
             Text(label)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(dark ? Color.white : Color.black)
-            TextEditor(text: text)
-                .font(.system(size: 14))
-                .foregroundStyle(Color(nsColor: .labelColor))
-                .scrollContentBackground(.hidden)
-                .padding(5)
-                .frame(height: editorHeight(text.wrappedValue))
-                .background(dark ? Color.white.opacity(0.06) : Color.black.opacity(0.035), in: RoundedRectangle(cornerRadius: 5))
-                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 0.7))
-                .focused($focused, equals: which)
-                .simultaneousGesture(TapGesture().onEnded { focused = which })
-                .accessibilityLabel(label)
+            if capturePreview {
+                Text(text.wrappedValue)
+                    .font(.system(size: 14))
+                    .foregroundStyle(dark ? Color.white : Color.black)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .frame(height: editorHeight(text.wrappedValue))
+                    .background(dark ? Color.white.opacity(0.06) : Color.black.opacity(0.035), in: RoundedRectangle(cornerRadius: 5))
+                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 0.7))
+            } else {
+                TextEditor(text: text)
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color(nsColor: .labelColor))
+                    .scrollContentBackground(.hidden)
+                    .padding(5)
+                    .frame(height: editorHeight(text.wrappedValue))
+                    .background(dark ? Color.white.opacity(0.06) : Color.black.opacity(0.035), in: RoundedRectangle(cornerRadius: 5))
+                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 0.7))
+                    .focused($focused, equals: which)
+                    .simultaneousGesture(TapGesture().onEnded { focused = which })
+                    .accessibilityLabel(label)
+            }
         }
     }
     private func resize() {

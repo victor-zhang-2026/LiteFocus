@@ -6,7 +6,13 @@ LiteFocus 是一款原生 macOS 桌面悬浮工具，始终只保存一件当下
 
 LiteFocus is a native macOS floating tool for one current activity and one goal. Hover over the yellow sprout ball to view them; click a field once to edit, with immediate local saving. Clear removes both fields, with no history.
 
-![LiteFocus 中文浅色界面](docs/images/panel-zh-light.png) ![LiteFocus English Dark mode](docs/images/panel-en-dark.png)
+### 中文浅色界面
+
+<p align="center"><img src="docs/images/panel-zh-light.png" alt="LiteFocus 中文浅色界面，展示一个事项和一个目标" width="600"></p>
+
+### English Dark mode
+
+<p align="center"><img src="docs/images/panel-en-dark.png" alt="LiteFocus English Dark mode with one activity and one goal" width="600"></p>
 
 ## 功能 / Features
 

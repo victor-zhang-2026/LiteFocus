@@ -6,7 +6,7 @@ macOS 14+，Apple Silicon（arm64）。 / macOS 14+ on Apple Silicon (arm64).
 
 ## 安装 / Install
 
-1. 在 [Releases](https://github.com/victor-zhang-2026/LiteFocus/releases/latest) 下载 `LiteFocus-1.0.0-macOS-arm64.zip` 和 `SHA256SUMS`。
+1. 在 [Releases](https://github.com/victor-zhang-2026/LiteFocus/releases/latest) 下载最新 `LiteFocus-<版本>-macOS-arm64.zip` 和 `SHA256SUMS`。
 2. 同目录运行 `shasum -a 256 -c SHA256SUMS`。 / Verify the downloaded ZIP with the checksum file.
 3. 解压后打开 `LiteFocus.app`，需要时拖入“应用程序”。 / Unzip and open the app; optionally move it to Applications.
 4. 本包为 ad-hoc 签名，未经过 Apple 公证。首次打开可在 Finder 中右键点击应用并选择“打开”。 / The app is ad-hoc signed and not notarized. On first launch, right-click it in Finder and choose Open.
