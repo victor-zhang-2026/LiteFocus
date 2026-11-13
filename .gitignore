@@ -1,0 +1,12 @@
+.DS_Store
+.build/
+.swiftpm/
+build/
+marketing/
+release/**/*.zip
+release/**/download-verification/
+AGENTS.md
+plan.md
+progress.md
+decision.md
+handoff.md
