@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 — 2026-11-13
+
+- Removed the visible scrollbar tracks from both empty editors.
+- Kept text editing, scrolling, local persistence, and Clear behavior.
+
 ## 1.0.1 — 2026-11-13
 
 - Replaced small, soft README screenshots with crisp 4× renders and full-width presentation.

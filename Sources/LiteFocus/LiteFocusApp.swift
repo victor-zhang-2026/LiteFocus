@@ -137,6 +137,7 @@ final class FocusPanel: NSPanel {
         cancelClose()
         close()
     }
+    func endEditing() { panel.makeFirstResponder(nil) }
     func open() {
         cancelClose()
         guard !opened else { return }

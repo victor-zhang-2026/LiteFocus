@@ -7,7 +7,7 @@ struct FocusView: View {
     var capturePreview = false
     @AppStorage("language") private var language = Locale.current.language.languageCode?.identifier == "zh" ? "zh" : "en"
     @AppStorage("appearance") private var appearance = "light"
-    @FocusState private var focused: Field?
+    @State private var focused: Field?
     @State private var dragPrevious: CGSize = .zero
     @State private var pinVisual = false
     enum Field: Hashable { case activity, goal }
@@ -50,7 +50,7 @@ struct FocusView: View {
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(Color(nsColor: .labelColor))
             Spacer(minLength: 0)
-            button("trash", help: Copy.text("清零", "Clear")) { store.clear(); focused = nil }
+            button("trash", help: Copy.text("清零", "Clear")) { store.clear(); controller.endEditing(); focused = nil }
             button("globe", help: language == "zh" ? "Switch to English" : "切换到中文") { language = language == "zh" ? "en" : "zh" }
             button(dark ? "moon" : "sun.max", help: dark ? Copy.text("切换浅色模式", "Switch to Light") : Copy.text("切换深色模式", "Switch to Dark")) {
                 controller.transitionAppearance { appearance = dark ? "light" : "dark" }
@@ -93,22 +93,83 @@ struct FocusView: View {
                     .background(dark ? Color.white.opacity(0.06) : Color.black.opacity(0.035), in: RoundedRectangle(cornerRadius: 5))
                     .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 0.7))
             } else {
-                TextEditor(text: text)
-                    .font(.system(size: 14))
-                    .foregroundStyle(Color(nsColor: .labelColor))
-                    .scrollContentBackground(.hidden)
+                PlainFocusEditor(text: text) { active in
+                    if active { focused = which }
+                    else if focused == which { focused = nil }
+                }
                     .padding(5)
                     .frame(height: editorHeight(text.wrappedValue))
                     .background(dark ? Color.white.opacity(0.06) : Color.black.opacity(0.035), in: RoundedRectangle(cornerRadius: 5))
                     .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 0.7))
-                    .focused($focused, equals: which)
-                    .simultaneousGesture(TapGesture().onEnded { focused = which })
                     .accessibilityLabel(label)
             }
         }
     }
     private func resize() {
         controller.resizePanel(height: 46 + 0.5 + 36 + 2 * 19 + 14 + editorHeight(store.activity) + editorHeight(store.goal) + 16)
+    }
+}
+
+private struct PlainFocusEditor: NSViewRepresentable {
+    @Binding var text: String
+    let onFocusChange: (Bool) -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(text: $text) }
+
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSScrollView()
+        scrollView.drawsBackground = false
+        scrollView.hasVerticalScroller = false
+        scrollView.hasHorizontalScroller = false
+        scrollView.borderType = .noBorder
+
+        let editor = FocusTextView(frame: .zero)
+        editor.delegate = context.coordinator
+        editor.onFocusChange = onFocusChange
+        editor.string = text
+        editor.font = .systemFont(ofSize: 14)
+        editor.textColor = .labelColor
+        editor.insertionPointColor = .labelColor
+        editor.drawsBackground = false
+        editor.isRichText = false
+        editor.isVerticallyResizable = true
+        editor.isHorizontallyResizable = false
+        editor.autoresizingMask = [.width]
+        editor.textContainerInset = NSSize(width: 5, height: 3)
+        editor.textContainer?.widthTracksTextView = true
+        editor.textContainer?.containerSize = NSSize(width: scrollView.contentSize.width, height: .greatestFiniteMagnitude)
+        scrollView.documentView = editor
+        return scrollView
+    }
+
+    func updateNSView(_ scrollView: NSScrollView, context: Context) {
+        context.coordinator.text = $text
+        guard let editor = scrollView.documentView as? FocusTextView else { return }
+        editor.onFocusChange = onFocusChange
+        if editor.string != text { editor.string = text }
+    }
+
+    final class Coordinator: NSObject, NSTextViewDelegate {
+        var text: Binding<String>
+        init(text: Binding<String>) { self.text = text }
+        func textDidChange(_ notification: Notification) {
+            guard let editor = notification.object as? NSTextView else { return }
+            text.wrappedValue = editor.string
+        }
+    }
+}
+
+private final class FocusTextView: NSTextView {
+    var onFocusChange: ((Bool) -> Void)?
+    override func becomeFirstResponder() -> Bool {
+        let result = super.becomeFirstResponder()
+        if result { onFocusChange?(true) }
+        return result
+    }
+    override func resignFirstResponder() -> Bool {
+        let result = super.resignFirstResponder()
+        if result { onFocusChange?(false) }
+        return result
     }
 }
 
